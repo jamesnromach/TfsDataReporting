@@ -1,0 +1,45 @@
+﻿<Window x:Class="TfsDataReporting.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TfsDataReporting"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="776.591" Width="687.495">
+    <Grid Margin="0,0,-48,-58" ScrollViewer.VerticalScrollBarVisibility="Auto">
+        <Label x:Name="WorkItemTypesLabel" Content="Select the &#xD;&#xA;Work Item Types &#xD;&#xA;to Report On" HorizontalAlignment="Left" Margin="41,160,0,0" VerticalAlignment="Top" Width="102" Height="63" BorderThickness="1" Background="#FF81F5DB" TabIndex="0" BorderBrush="#FFE85353"/>
+        <CheckBox x:Name="BugCheckBox" Content="Bug" HorizontalAlignment="Left" Height="17" Margin="47,352,0,0" VerticalAlignment="Top" Width="72" Checked="checkBox_Checked" TabIndex="6"/>
+        <CheckBox x:Name="EpicCheckBox" Content="Epic" HorizontalAlignment="Left" Height="17" Margin="47,242,0,0" VerticalAlignment="Top" Width="72" Checked="checkBox_Checked" TabIndex="1"/>
+        <CheckBox x:Name="FeatureCheckBox" Content="Feature" HorizontalAlignment="Left" Height="17" Margin="47,264,0,0" VerticalAlignment="Top" Width="72" Checked="checkBox_Checked" TabIndex="2"/>
+        <CheckBox x:Name="IssueCheckBox" Content="Issue" HorizontalAlignment="Left" Height="17" Margin="47,374,0,0" VerticalAlignment="Top" Width="72" Checked="checkBox_Checked" TabIndex="7"/>
+        <CheckBox x:Name="TaskCheckBox" Content="Task" HorizontalAlignment="Left" Height="17" Margin="47,308,0,0" VerticalAlignment="Top" Width="72" Checked="checkBox_Checked" TabIndex="4"/>
+        <CheckBox x:Name="UserStoryCheckBox" Content="User Story" HorizontalAlignment="Left" Height="17" Margin="47,286,0,0" VerticalAlignment="Top" Width="85" Checked="checkBox_Checked" TabIndex="3"/>
+        <ComboBox x:Name="TfsProjectComboBox" HorizontalAlignment="Left" Margin="166,193,0,0" VerticalAlignment="Top" Width="323" RenderTransformOrigin="0.491,-0.876" ToolTip="TFS Project Name" Tag="2" SelectedValuePath="1" Text="3" Height="30" TabIndex="8"/>
+        <ComboBox x:Name="OutputFileLocationComboBox" HorizontalAlignment="Left" Margin="166,228,0,0" VerticalAlignment="Top" Width="323" RenderTransformOrigin="0.491,-0.876" ToolTip="TFS Project Name" Tag="2" SelectedValuePath="1" Text="3" Height="30" TabIndex="10" SelectionChanged="OutputFileLocationComboBox_SelectionChanged"/>
+
+        <ListBox x:Name="DataItemSelectionListBox" ItemsSource="{Binding}" HorizontalAlignment="Left" Height="301" Margin="166,286,0,0" VerticalAlignment="Top" Width="323" TabIndex="12" SelectionChanged="DataItemSelectionListBox_SelectionChanged" SelectionMode="Extended">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding FieldName}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+
+        </ListBox>
+
+        <CheckBox x:Name="TestCaseCheckBox" Content="Test Case" HorizontalAlignment="Left" Height="17" Margin="47,330,0,0" VerticalAlignment="Top" Width="72" Checked="checkBox_Checked" TabIndex="5"/>
+        <Button x:Name="ExportDataItemsButton" Content="EXPORT DATA" HorizontalAlignment="Left" Height="31" Margin="494,409,0,0" VerticalAlignment="Top" Width="92" Background="#FF7AC546" Foreground="#FF191A1B" FontWeight="Bold" TabIndex="13" Click="ExportDataItemsButton_Click"/>
+        <Button x:Name="GetTfsProjectButton" Content="Get TFS Project Name" HorizontalAlignment="Left" Height="30" Margin="489,193,0,0" VerticalAlignment="Top" Width="138" IsDefault="True" Background="#FFF9F027" TabIndex="9" Click="GetTfsProjectButton_Click"/>
+        <Button x:Name="GetOutputFileLocationButton" Content="Get Output File Location" HorizontalAlignment="Left" Height="30" Margin="489,228,0,0" VerticalAlignment="Top" Width="138" Background="#FFFBF22B" TabIndex="11" Click="GetOutputFileLocationButton_Click"/>
+        <Button x:Name="CancelButton" Content="CANCEL" HorizontalAlignment="Left" Height="42" Margin="494,592,0,0" VerticalAlignment="Top" Width="71" Background="#FFCB2C57" FontWeight="Bold" Foreground="#FFFDFDFA" TabIndex="14" Click="CancelButton_Click"/>
+        <Label x:Name="DataItemSelectionLabel" Content="Multiple Data Items may be selected.&#xD;&#xA;They will be added in the order that they are selected." HorizontalAlignment="Left" Height="49" Margin="166,592,0,0" VerticalAlignment="Top" Width="323"/>
+        <Label x:Name="TitleLabel" Content="Export Work Items From TFS to an Excel Workbook" HorizontalAlignment="Left" Height="32" Margin="43,10,0,0" VerticalAlignment="Top" Width="471" FontWeight="Bold" FontSize="18.667"/>
+        <TextBox x:Name="InstructionTextBox" HorizontalAlignment="Left" Height="79" Margin="47,47,0,0" TextWrapping="Wrap" Text="Instructions:   Select the Work Item Types that you want to export.&#xD;&#xA;                       Select the TFS Project Name.&#xD;&#xA;                       Select the Output File Location.&#xD;&#xA;                       Select the Data Items to Export.&#xD;&#xA;" VerticalAlignment="Top" Width="601" TextChanged="InstructionTextBox_TextChanged" IsEnabled="False"/>
+        <Image x:Name="AboutImage" HorizontalAlignment="Left" Height="37" Margin="638,10,0,0" VerticalAlignment="Top" Width="32" Source="Images/Question.png"/>
+        <CheckBox x:Name="ExportAttachmentsCheckBox" Content="Export Attachments" HorizontalAlignment="Left" Height="24" Margin="150,656,0,0" VerticalAlignment="Top" Width="152"/>
+        <ProgressBar x:Name="ExportProgressBar" HorizontalAlignment="Left" Height="12" Margin="494,445,0,0" VerticalAlignment="Top" Width="133"/>
+        <Label x:Name="WorkItemsLabel" Content="Work Items 0/0" HorizontalAlignment="Left" Height="29" Margin="494,462,0,0" VerticalAlignment="Top" Width="133"/>
+
+    </Grid>
+</Window>
