@@ -72,7 +72,7 @@ namespace TfsDataReporting
         /// <summary>
         /// WorkItemCollection to store all the work items
         /// </summary>
-        private string workItemCurrently = "Bug";  // Default 
+        private string workItemCurrently = "";  // Default 
         
         /// <summary>
         /// Background worker used for pulling in the TFS data when the team project gets loaded
@@ -98,6 +98,11 @@ namespace TfsDataReporting
         /// List to store all the fields from TFS
         /// </summary>
         private List<Fields> WorkItemTypesList = new List<Fields>();
+
+        /// <summary>
+        /// List to store all the fields from TFS
+        /// </summary>
+        private List<Fields> WorkItemCheckBoxList = new List<Fields>();
 
         /// <summary>
         /// String to hold the file location
@@ -164,11 +169,40 @@ namespace TfsDataReporting
             Closing += MainWindow_Closing;
         }
 
-        private void checkBox_Checked(object sender, RoutedEventArgs e)
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             CheckBox checkBox = (CheckBox)sender;
-            workItemCurrently = checkBox.Content.ToString();
+
+            //ClearAllCheckBoxes();
+            //checkBox.IsChecked = true;
+
+            if (checkBox.IsChecked.Value)
+            {
+                workItemCurrently = checkBox.Content.ToString();
+                if (workItemCollection != null)
+                {
+                    GetWorkItemCollection();
+                }
+            }
+            else
+            {
+                workItemCurrently = "";
+            }
+
         }
+
+
+        private void ClearAllCheckBoxes()
+        {
+            EpicCheckBox.IsChecked = false;
+            FeatureCheckBox.IsChecked = false;
+            IssueCheckBox.IsChecked = false;
+            BugCheckBox.IsChecked = false;
+            TestCaseCheckBox.IsChecked = false;
+            TaskCheckBox.IsChecked = false;
+            UserStoryCheckBox.IsChecked = false;
+        }
+
 
 
         private void InstructionTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -276,23 +310,10 @@ namespace TfsDataReporting
             {
                 IEnumerable<WorkItemType> types = category.WorkItemTypes;
             }
-            //##################
 
-
-
-
-            workItemCollection = workItemStore.Query(" SELECT [System.Id], [System.WorkItemType],[System.State], [System.AssignedTo], [System.Title] FROM WorkItems WHERE [System.TeamProject] = '" + teamProject + "' AND [System.WorkItemType] = '" + workItemCurrently + "' ORDER BY [System.WorkItemType], [System.Id]");
-            //workItemCollection = workItemStore.Query(" SELECT [System.Id], [System.WorkItemType],[System.State], [System.AssignedTo], [System.Title] FROM WorkItems WHERE [System.TeamProject] = '" + teamProject + "' AND [System.WorkItemType] = 'Bug' ORDER BY [System.WorkItemType], [System.Id]");
-            //workItemCollection = workItemStore.Query(" SELECT [System.Id], [System.WorkItemType],[System.State], [System.AssignedTo], [System.Title] FROM WorkItems WHERE [System.TeamProject] = '" + teamProject + "' AND [System.WorkItemType] = 'Test Case' ORDER BY [System.WorkItemType], [System.Id]");
-            //workItemCollection = workItemStore.Query(" SELECT [System.Id], [System.WorkItemType],[System.State], [System.AssignedTo], [System.Title] FROM WorkItems WHERE [System.TeamProject] = '" + teamProject + "' AND [System.WorkItemType] = 'User Story' ORDER BY [System.WorkItemType], [System.Id]");
-
-
-
-            if (workItemCollection.Count > 0)
-            {
-                LoadWorkItemsToListbox();
-            }
+            GetWorkItemCollection();
         }
+
 
         /// <summary>
         /// When the tfsProject button is clicked, show the TeamProjectPicker
@@ -310,13 +331,29 @@ namespace TfsDataReporting
             }
         }
 
+
+        /// <summary>
+        /// Loads the items into the listbox.
+        /// Need to use a dispatcher because we are running on a different thread
+        /// </summary>
+        private void GetWorkItemCollection()
+        {
+            workItemCollection = workItemStore.Query(" SELECT [System.Id], [System.WorkItemType],[System.State], [System.AssignedTo], [System.Title] FROM WorkItems WHERE [System.TeamProject] = '" + teamProject + "' AND [System.WorkItemType] = '" + workItemCurrently + "' ORDER BY [System.WorkItemType], [System.Id]");
+
+            if (workItemCollection.Count > 0)
+            {
+                LoadWorkItemsToListbox();
+            }
+        }
+
+
         /// <summary>
         /// Loads the items into the listbox.
         /// Need to use a dispatcher because we are running on a different thread
         /// </summary>
         private void LoadWorkItemsToListbox()
         {
-            WorkItem workItem = this.workItemCollection[0];
+            WorkItem workItem = workItemCollection[0];
             fieldList.Clear();
             foreach (Field field in workItem.Fields)
             {
@@ -326,11 +363,13 @@ namespace TfsDataReporting
 
             fieldList.Sort((x, y) => x.FieldName.CompareTo(y.FieldName));
 
-            Dispatcher.Invoke((Action)(() =>
+            Dispatcher.Invoke(() =>
             {
+                DataItemSelectionListBox.DataContext = null;
                 DataItemSelectionListBox.DataContext = fieldList;
-            }));
+            });
         }
+
 
         /// <summary>
         /// Removes the HTML tags from the field values
@@ -487,12 +526,12 @@ namespace TfsDataReporting
             foreach (WorkItem workItem in this.workItemCollection)
             {
                 bool isChecked = false;
-                Dispatcher.Invoke((Action)(() =>
+                Dispatcher.Invoke(() =>
                 {
                     WorkItemsLabel.Content = "Work Item " + (ExportProgressBar.Value + 1) + "/" + workItemCollection.Count;
                     ExportProgressBar.Value = ExportProgressBar.Value + 1;
                     isChecked = ExportAttachmentsCheckBox.IsChecked.Value;
-                }));
+                });
                 if (isChecked)
                 {
                     ExportBugAttachments(workItem);
